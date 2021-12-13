@@ -8,18 +8,18 @@ class pair {
 
 public:
 
-	typedef typename T1 first_type;
-	typedef typename T2 second_type;
+	typedef T1 first_type;
+	typedef T2 second_type;
 
 	/* CONSTRUCTORS */
 	pair(void) {};			
-	pair(first_type const& first, second_type const& second) {
-		this->first = first;
-		this->second = second;
+	pair(first_type const& first, second_type const& second) : first(first), second(second) {
+		// this->first = first;
+		// this->second = second;
 	};
 	template <class U, class V>
 	pair(const pair<U, V>& p) {
-		*this = pair;
+		*this = p;
 	}
 
 	/* OVERLOAD */
@@ -29,7 +29,6 @@ public:
 		return *this;
 	}
 
-private:
 	first_type	first;
 	second_type	second;
 

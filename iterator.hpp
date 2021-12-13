@@ -23,9 +23,10 @@ public:
 	typedef typename it::reference				reference;
 
 	/* CONSTRUCTOR/DESTRUCTOR */
-	iterator(void) {}
-	iterator(pointer ptr) { this->_ptr = ptr; }
-	iterator(iterator const& it) { *this = it; }
+	iterator(void) : _ptr(0) {}
+	explicit iterator(iterator_type ptr) { this->_ptr = ptr; }
+	template <class Iter>
+	iterator(iterator<Iter> const& it) : _ptr(it.base()) { /*this->_ptr = it.base();*/ }
 	~iterator(void) {}
 
 	/* OPERATORS */
@@ -79,27 +80,36 @@ public:
 	pointer			base(void) const { return this->_ptr; }
 	pointer 		operator->(void) const { return this->_ptr; }
 	reference	 	operator*(void) const { return *this->_ptr; }
-	reference		operator[](difference_type n) { return *this->_ptr + n; }
+	reference		operator[](difference_type n) const { return *(this->_ptr + n); }
+
+
 
 private:
 	pointer	_ptr;
 	
-};
+}; // iterator
 
 	/* COMPARISON OPERATORS */
-	template<class iterator>
-  	bool 		operator==(ft::iterator<iterator> const& it, ft::iterator<iterator> const& ite) { return it.base()==ite.base(); }
-	template<class iterator>
-	bool 		operator!=(ft::iterator<iterator> const& it, ft::iterator<iterator> const& ite) { return it.base()!=ite.base(); }
-	template<class iterator>
-	bool		operator<(ft::iterator<iterator> const& it, ft::iterator<iterator> const& ite) { return it.base()<ite.base(); }
-	template<class iterator>
-	bool		operator<=(ft::iterator<iterator> const& it, ft::iterator<iterator> const& ite) { return it.base()<=ite.base(); }
-	template<class iterator>
-	bool		operator>(ft::iterator<iterator> const& it, ft::iterator<iterator> const& ite) { return it.base()>ite.base(); }
-	template<class iterator>
-	bool		operator>=(ft::iterator<iterator> const& it, ft::iterator<iterator> const& ite) { return it.base()>=ite.base(); }	
+	template<class iterator, class iterator2>
+  	bool 		operator==(ft::iterator<iterator> const& it, ft::iterator<iterator2> const& ite) { return it.base()==ite.base(); }
+	template<class iterator, class iterator2>
+	bool 		operator!=(ft::iterator<iterator> const& it, ft::iterator<iterator2> const& ite) { return it.base()!=ite.base(); }
+	template<class iterator, class iterator2>
+	bool		operator<(ft::iterator<iterator> const& it, ft::iterator<iterator2> const& ite) { return it.base()<ite.base(); }
+	template<class iterator, class iterator2>
+	bool		operator<=(ft::iterator<iterator> const& it, ft::iterator<iterator2> const& ite) { return it.base()<=ite.base(); }
+	template<class iterator, class iterator2>
+	bool		operator>(ft::iterator<iterator> const& it, ft::iterator<iterator2> const& ite) { return it.base()>ite.base(); }
+	template<class iterator, class iterator2>
+	bool		operator>=(ft::iterator<iterator> const& it, ft::iterator<iterator2> const& ite) { return it.base()>=ite.base(); }	
 
-};
+	template<class Iterator>
+	ft::iterator<Iterator>	operator+(typename ft::iterator<Iterator>::difference_type n, ft::iterator<Iterator> const& it) { return it+n; }
+	template<class Iterator1, class Iterator2>
+	typename ft::iterator<Iterator1>::difference_type operator-(const ft::iterator<Iterator1> lhs, const ft::iterator<Iterator2> rhs) { return lhs.base() - rhs.base(); }
+	
+
+
+}; // namespace ft
 
 #endif
