@@ -10,33 +10,34 @@ template <typename Iterator>
 class bidirectional_iterator {
 
 private:
-	typedef ft::iterator_traits<Iterator>	it;
-	
+	// typedef ft::iterator_traits<Iterator>	it;
+
 
 public:
 
-	typedef Iterator						iterator_type;
-	typedef typename it::iterator_category	iterator_category;
-	typedef typename it::value_type			value_type;
-	typedef typename it::difference_type	difference_type;
-	typedef typename it::pointer			pointer;
-	typedef typename it::reference			reference;
+	typedef Iterator								iterator_type;
+	// typedef typename it::iterator_category		iterator_category;
+	// typedef typename it::value_type				value_type;
+	// typedef typename it::difference_type		difference_type;
+	// typedef typename it::pointer				pointer;
+	// typedef typename it::reference				reference;
 
-	bidirectional_iterator(void) : _ptr(0) {}
-	explicit bidirectional_iterator(iterator_type ptr) { this->_ptr = ptr; }
+	/* CONSTRUCTOR/DESTRUCTOR */
+	bidirectional_iterator(void) : n(0), last(0), _ptr(0) {}
+	explicit bidirectional_iterator(Node<iterator_type> *ptr, Node<iterator_type> *Last = NULL) : n(ptr), last(Last), _ptr(&ptr->val) {}
 	template <class Iter>
 	bidirectional_iterator(bidirectional_iterator<Iter> const& it) : _ptr(it.base()) {}
 	~bidirectional_iterator(void) {}
 
 	bidirectional_iterator& operator=(bidirectional_iterator const& it) {
 		this->_ptr = it._ptr;
+		this->n = it.n;
 		return *this;
 	}
 
-
-	/* OPERATOR PLUS */
-	bidirectional_iterator& operator++(void) { // GET NEXT
-		this->_ptr++;
+	bidirectional_iterator& operator++(void) {
+		this->n = this->n->getNext();
+		this->_ptr = &this->n->val;
 		return *this;
 	}
 	bidirectional_iterator operator++(int) {
@@ -45,9 +46,14 @@ public:
 		return tmp;
 	}
 
-	/* OPERATOR MINUS */
-	bidirectional_iterator& operator--(void) { // GET PREV
-		this->_ptr--;
+	bidirectional_iterator& operator--(void) {
+		if (this->n->null_leaf == NULL) {
+			this->n = this->last;
+			this->_ptr = &this->n->val;
+			return *this;
+		}
+		this->n = this->n->getPrev();
+		this->_ptr = &this->n->val;
 		return *this;
 	}
 	bidirectional_iterator operator--(int) {
@@ -56,28 +62,29 @@ public:
 		return tmp;
 	}
 
-	pointer		base(void) const { return this->_ptr; }
-	pointer		operator->(void) const { return this->_ptr; }
-	reference	operator*(void) const { return *this->_ptr; }
+	iterator_type*			base(void) const { return this->_ptr; }
+	iterator_type*			operator->(void) const { return this->_ptr; }
+	iterator_type&			operator*(void) const { return *this->_ptr; }
 
 private:
-	pointer _ptr;
+	Node<iterator_type> *n;
+	Node<iterator_type> *last;
+	iterator_type *_ptr;
 
-}; // bidirectional_iterator
+}; // b_iterator
 
-	/* COMPARISON OPERATORS */
 	template<class iterator, class iterator2>
-	bool	operator==(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()==ite.base(); }
+  	bool 		operator==(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()==ite.base(); }
 	template<class iterator, class iterator2>
-	bool	operator!=(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()!=ite.base(); }
+	bool 		operator!=(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()!=ite.base(); }
 	template<class iterator, class iterator2>
-	bool	operator>(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()>ite.base(); }
+	bool		operator<(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()<ite.base(); }
 	template<class iterator, class iterator2>
-	bool	operator<(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()<ite.base(); }
+	bool		operator<=(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()<=ite.base(); }
 	template<class iterator, class iterator2>
-	bool	operator>=(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()>=ite.base(); }
+	bool		operator>(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()>ite.base(); }
 	template<class iterator, class iterator2>
-	bool	operator<=(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()<=ite.base(); }
+	bool		operator>=(ft::bidirectional_iterator<iterator> const& it, ft::bidirectional_iterator<iterator2> const& ite) { return it.base()>=ite.base(); }	
 
 }; // namespace ft
 

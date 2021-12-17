@@ -80,7 +80,7 @@ public:
 	iterator_type	base(void) const { return this->_ptr; }
 	iterator_type	operator->(void) const { return this->_ptr; }
 	reference		operator*(void) const { return *(this->_ptr); }
-	reference 		operator[](difference_type n) { return *(this->_ptr - n); }
+	reference		operator[](difference_type n) { return *(this->_ptr - n); }
 
 private:
 	iterator_type _ptr;

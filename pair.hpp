@@ -18,12 +18,12 @@ public:
 		// this->second = second;
 	};
 	template <class U, class V>
-	pair(const pair<U, V>& p) {
-		*this = p;
+	pair(const pair<U, V>& p) : first(p.first), second(p.second) {
+		//*this = p;
 	}
 
 	/* OVERLOAD */
-	pair& operator=(pair const& p) {
+	pair& operator=(const pair& p) {
 		this->first = p.first;
 		this->second = p.second;
 		return *this;

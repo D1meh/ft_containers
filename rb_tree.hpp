@@ -7,20 +7,57 @@
 #define RED 'r'
 #define BLACK 'b'
 
-// template<class T>
-// class Node {
+template<class T>
+class Node {
 
-// public:
+private:
 
-// 	typedef T	value_type;
+	Node* getRightMost(Node *n) {
+		while (n->right != null_leaf)
+			n = n->right;
+		return n;
+	}
 
-// 	value_type	val;
-// 	Node*		left;
-// 	Node*		right;
-// 	Node*		parent;
-// 	char		color;
+	Node* getLeftMost(Node* n) {
+		while (n->left != null_leaf)
+			n = n->left;
+		return n;
+	}
 
-// }; // node
+public:
+
+	typedef T	value_type;
+
+	value_type	val;
+	Node*		left;
+	Node*		right;
+	Node*		parent;
+	Node*		null_leaf;
+	char		color;
+
+	Node* getNext(void) {
+		Node *tmp;
+
+		if (this->right != null_leaf)
+			return this->getLeftMost(this->right);
+		tmp = this;
+		while (tmp->parent != null_leaf && tmp == tmp->parent->right)
+			tmp = tmp->parent;
+		return tmp->parent;
+	}
+
+	Node* getPrev(void) {
+		Node *tmp;
+
+		if (this->left != null_leaf)
+			return this->getRightMost(this->left);
+		tmp = this;
+		while (tmp->parent != null_leaf && tmp == tmp->parent->left)
+			tmp = tmp->parent;
+		return tmp->parent;
+	}
+
+}; // node
 
 template<class T, class Alloc = std::allocator<T> >
 class RB_tree {
@@ -28,31 +65,7 @@ class RB_tree {
 public:
 
 	typedef T												value_type;
-
-	class Node {
-		public:
-
-			value_type	val;
-			Node*		left;
-			Node*		right;
-			Node*		parent;
-			char		color;
-
-			Node& operator++(void) {
-				if (this->right != null_leaf)
-					return getLeftMost(this->right);
-				while (this->parent != null_leaf && *this == this->parent->right)
-					this = this->parent;
-				return this->parent;
-			}
-
-			Node& operator--(void) {
-
-			}
-
-	}; // node
-
-
+	typedef Node<value_type>								Node;
 	typedef typename Alloc::template rebind<Node>::other	allocator_type;
 
 	Node* 			root;
@@ -61,7 +74,7 @@ public:
 
 		/*********************************/
 		/*							     */
-		/*  CONSTRUCTORS AND DESTRUCTORS */
+		/*   CONSTRUCTOR AND DESTRUCTOR  */
 		/*								 */
 		/*********************************/
 
@@ -72,12 +85,19 @@ public:
 		null_leaf->right = nullptr;
 		null_leaf->parent = nullptr;
 		null_leaf->color = BLACK;
+		null_leaf->null_leaf = NULL;
 		root = null_leaf;
+		root->parent = null_leaf;
 	}
 
 	~RB_tree() {
 		this->clean_tree(this->root);
 		this->alloc.deallocate(this->null_leaf, 1);
+	}
+
+	RB_tree& operator=(RB_tree const& t) {
+		this->clean_tree(this->root);
+		this->copy_tree(t.root);
 	}
 
 		/*********************************/
@@ -142,7 +162,7 @@ public:
 					nod = nod->parent->parent;
 				} else {
 					if (nod == nod->parent->right) {// case 2
-						nod = nod->parent;					
+						nod = nod->parent;				
 						this->left_rotate(nod);
 					}
 					// case 3
@@ -266,10 +286,18 @@ public:
 		return x;
 	}
 
-	int size(Node *nod) {
+	int size(Node *nod) const {
 		if (nod == null_leaf)
 			return 0;
 		return 1 + size(nod->left) + size(nod->right);
+	}
+
+	void copy_tree(Node* nod) {
+		if (nod != null_leaf) {
+			this->insert_node(create_node(nod->val));
+			copy_tree(nod->left);
+			copy_tree(nod->right);
+		}
 	}
 
 		/*********************************/
@@ -278,31 +306,31 @@ public:
 		/*								 */
 		/*********************************/
 
-	static Node* getLeftMost(Node *n) {
+	Node* getLeftMost(Node *n) const {
 		while (n->left != null_leaf)
 			n = n->left;
 		return n;
 	}
 
-	Node* getRightMost(Node *n) {
+	Node* getRightMost(Node *n) const {
 		while (n->right != null_leaf)
 			n = n->right;
 		return n;
 	}
 
-	Node* getFirst(void) {
+	Node* getFirst(void) const {
 		if (this->root == null_leaf)
 			return null_leaf;
 		return this->getLeftMost(this->root);
 	}
 
-	Node* getLast(void) {
+	Node* getLast(void) const {
 		if (this->root == null_leaf)
 			return null_leaf;
 		return this->getRightMost(this->root);
 	}
 
-	Node* getNext(Node *n) {
+	Node* getNext(Node *n) const {
 		if (n->right != null_leaf)
 			return getLeftMost(n->right);
 		while (n->parent != null_leaf && n == n->parent->right)
@@ -310,7 +338,7 @@ public:
 		return n->parent;
 	}
 
-	Node* getPrev(Node *n) {
+	Node* getPrev(Node *n) const {
 		if (n->left != null_leaf)
 			return getRightMost(n->left);
 		while (n->parent != null_leaf && n == n->parent->left)
@@ -331,6 +359,7 @@ public:
 		ret->left = null_leaf;
 		ret->right = null_leaf;
 		ret->parent = null_leaf;
+		ret->null_leaf = null_leaf;
 		ret->color = RED;
 		return ret;
 	}
@@ -357,6 +386,8 @@ public:
 		nod->left = this->null_leaf;
 		nod->right = this->null_leaf;
 		nod->color = RED;
+		if (this->size(this->root) == 0)
+			root->parent = null_leaf;
 		this->insert_fixup(nod);
 	}
 
@@ -392,7 +423,7 @@ public:
 			this->delete_fixup(x);
 	}
 
-	Node *search_node(Node *nod, value_type x) {
+	Node *search_node(Node *nod, value_type const& x) {
 		if (nod == null_leaf)
 			return NULL;
 		if (nod->val == x)
@@ -401,6 +432,18 @@ public:
 			return search_node(nod->left, x);
 		else
 			return search_node(nod->right, x);
+	}
+
+	template <class V>
+	Node* search_key(Node *nod, V const& x) {
+		if (nod == null_leaf)
+			return NULL;
+		if (nod->val.first == x)
+			return nod;
+		else if (nod->val.first > x)
+			return search_key(nod->left, x);
+		else
+			return search_key(nod->right, x);
 	}
 
 	void print_tree(Node *nod) {

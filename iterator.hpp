@@ -82,8 +82,6 @@ public:
 	reference	 	operator*(void) const { return *this->_ptr; }
 	reference		operator[](difference_type n) const { return *(this->_ptr + n); }
 
-
-
 private:
 	pointer	_ptr;
 	
