@@ -57,20 +57,35 @@ public:
 		return tmp->parent;
 	}
 
+	Node& operator=(Node const& n) {
+		this->val = n.val;
+		this->left = n.left;
+		this->right = n.right;
+		this->parent = n.parent;
+		this->color = n.color;
+		return *this;
+	}
+
 }; // node
 
-template<class T, class Alloc = std::allocator<T> >
+template<class T, class Comp, class Alloc = std::allocator<T> >
 class RB_tree {
+
+private:
+
+	
 
 public:
 
 	typedef T												value_type;
+	typedef Comp											key_compare;
 	typedef Node<value_type>								Node;
 	typedef typename Alloc::template rebind<Node>::other	allocator_type;
 
 	Node* 			root;
 	Node* 			null_leaf;
 	allocator_type	alloc;
+	key_compare		comp;
 
 		/*********************************/
 		/*							     */
@@ -90,14 +105,21 @@ public:
 		root->parent = null_leaf;
 	}
 
-	~RB_tree() {
-		this->clean_tree(this->root);
-		this->alloc.deallocate(this->null_leaf, 1);
+	~RB_tree() {}
+
+	RB_tree(RB_tree const& t) {
+		this->root = t.root;
+		this->alloc = t.alloc;
+		this->comp = t.comp;
+		this->null_leaf = t.null_leaf;
 	}
 
 	RB_tree& operator=(RB_tree const& t) {
-		this->clean_tree(this->root);
-		this->copy_tree(t.root);
+		this->root = t.root;
+		this->alloc = t.alloc;
+		this->comp = t.comp;
+		this->null_leaf = t.null_leaf;
+		return *this;
 	}
 
 		/*********************************/
@@ -262,6 +284,12 @@ public:
 		/*								 */
 		/*********************************/
 
+	void swap(RB_tree& t) {
+		Node* tmp = this->root;
+		this->root = t.root;
+		t.root = tmp;
+	}
+
 	void clean_tree(Node* nod) {
 		if (nod != null_leaf) {
 			clean_tree(nod->left);
@@ -307,13 +335,14 @@ public:
 		/*********************************/
 
 	Node* getLeftMost(Node *n) const {
-		while (n->left != null_leaf)
+		while (n->left != NULL && n->left != null_leaf) {
 			n = n->left;
+		}
 		return n;
 	}
 
 	Node* getRightMost(Node *n) const {
-		while (n->right != null_leaf)
+		while (n->right != null_leaf && n->right != NULL)
 			n = n->right;
 		return n;
 	}
@@ -370,7 +399,8 @@ public:
 
 		while (tmp != this->null_leaf) {
 			y = tmp;
-			if (nod->val < tmp->val)
+			//if (nod->val < tmp->val)
+			if (comp(nod->val.first, tmp->val.first))
 				tmp = tmp->left;
 			else
 				tmp = tmp->right;
@@ -378,7 +408,8 @@ public:
 		nod->parent = y;
 		if (y == this->null_leaf)
 			this->root = nod;
-		else if (nod->val < y->val)
+		else if (comp(nod->val.first, y->val.first))
+		//else if (nod->val < y->val)
 			y->left = nod;
 		else
 			y->right = nod;
@@ -428,7 +459,8 @@ public:
 			return NULL;
 		if (nod->val == x)
 			return nod;
-		else if (nod->val > x)
+		//else if (nod->val > x)
+		else if (comp(x.first, nod->val.first))
 			return search_node(nod->left, x);
 		else
 			return search_node(nod->right, x);
@@ -440,7 +472,8 @@ public:
 			return NULL;
 		if (nod->val.first == x)
 			return nod;
-		else if (nod->val.first > x)
+		//else if (nod->val.first > x)
+		else if (comp(x, nod->val.first))
 			return search_key(nod->left, x);
 		else
 			return search_key(nod->right, x);

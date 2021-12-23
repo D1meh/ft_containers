@@ -37,24 +37,24 @@ public:
 template <class T1,class T2>
 pair<T1,T2>	make_pair(T1 x, T2 y) { return ( pair<T1,T2>(x,y) ); };
 
-};
-
 template <class T1, class T2>
-bool operator==(ft::pair<T1, T2> const& p1, ft::pair<T1, T2> const& p2) { return p1.first == p2.first && p1.second == p2.second; }
+bool operator==(pair<T1, T2> const& p1, pair<T1, T2> const& p2) { return p1.first == p2.first && p1.second == p2.second; }
 
 template<class T1, class T2>
-bool operator!=(ft::pair<T1, T2> const& p1, ft::pair<T1, T2> const& p2) { return p1.first != p2.first || p1.second != p2.second; }
+bool operator!=(pair<T1, T2> const& p1, pair<T1, T2> const& p2) { return p1.first != p2.first || p1.second != p2.second; }
 
 template<class T1, class T2>
-bool operator<(ft::pair<T1, T2> const& p1, ft::pair<T1, T2> const& p2) { return p1.first < p2.first || (p1.first <= p2.first && p1.second < p2.second); }
+bool operator<(pair<T1, T2> const& p1, pair<T1, T2> const& p2) { return p1.first < p2.first || (p1.first <= p2.first && p1.second < p2.second); }
 
 template<class T1, class T2>
-bool operator>(ft::pair<T1, T2> const& p1, ft::pair<T1, T2> const& p2) { return p1.first > p2.first || (p1.first >= p2.first && p1.second > p2.second); }
+bool operator>(pair<T1, T2> const& p1, pair<T1, T2> const& p2) { return p1.first > p2.first || (p1.first >= p2.first && p1.second > p2.second); }
 
 template<class T1, class T2>
-bool operator<=(ft::pair<T1, T2> const& p1, ft::pair<T1, T2> const& p2) { return p1.first <= p2.first || (p1.first <= p2.first && p1.second <= p2.second); }
+bool operator<=(pair<T1, T2> const& p1, pair<T1, T2> const& p2) { return p1.first <= p2.first || (p1.first <= p2.first && p1.second <= p2.second); }
 
 template<class T1, class T2>
-bool operator>=(ft::pair<T1, T2> const& p1, ft::pair<T1, T2> const& p2) { return p1.first >= p2.first || (p1.first >= p2.first && p1.second >= p2.second); }
+bool operator>=(pair<T1, T2> const& p1, pair<T1, T2> const& p2) { return p1.first >= p2.first || (p1.first >= p2.first && p1.second >= p2.second); }
+
+};
 
 #endif

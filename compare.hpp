@@ -30,7 +30,7 @@ bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
 			return true;
 		
 		else if (comp(*first2, *first1))
-			return true;
+			return false;
 		
 		first1++;
 		first2++;
