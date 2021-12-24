@@ -21,7 +21,6 @@ public:
 	typedef T															mapped_type;
 	typedef typename ft::pair<key_type, mapped_type>					value_type;
 	typedef Compare														key_compare;
-	//value compare utilise key compare
 	typedef Alloc														allocator_type;
 	typedef typename allocator_type::reference							reference;
 	typedef typename allocator_type::const_reference					const_reference;
@@ -59,7 +58,6 @@ private:
 	key_compare								_comp;
 	allocator_type							_alloc;
 	
-
 public:
 		/*********************************/
 		/*							     */
@@ -113,13 +111,13 @@ public:
 		/*								  */
 		/**********************************/
 
-	iterator		begin(void) { return iterator(this->_map.getFirst()); }
-	const_iterator	begin(void) const { return const_iterator(this->_map.getFirst()); }
+	iterator		begin(void) { return iterator(this->_map.getFirst(), this->_map.getLast()); }
+	const_iterator	begin(void) const { return const_iterator(this->_map.getFirst(), this->_map.getLast()); }
 	iterator		end(void) { return iterator(_map.null_leaf, this->_map.getLast()); }
 	const_iterator	end(void) const { return const_iterator(_map.null_leaf, this->_map.getLast()); }
 
-	reverse_iterator		rbegin(void) { return reverse_iterator(iterator(this->_map.getLast())); }
-	const_reverse_iterator	rbegin(void) const { return const_reverse_iterator(const_iterator(this->_map.getLast())); }
+	reverse_iterator		rbegin(void) { return reverse_iterator(iterator(this->_map.getLast(), this->_map.getFirst())); }
+	const_reverse_iterator	rbegin(void) const { return const_reverse_iterator(const_iterator(this->_map.getLast(), this->_map.getFirst())); }
 	reverse_iterator		rend(void) { return reverse_iterator(iterator(_map.null_leaf, this->_map.getFirst())); }
 	const_reverse_iterator	rend(void) const { return const_reverse_iterator(const_iterator(_map.null_leaf, this->_map.getFirst())); }
 
@@ -140,7 +138,6 @@ public:
 		/**********************************/	
 
 	mapped_type& operator[](key_type const& k) {
-		//return (*((this->insert(ft::make_pair(k,mapped_type()))).first)).second;
 		node_ptr tmp = this->_map.search_key(this->_map.root, k);
 		if (tmp)
 			return tmp->val.second;
@@ -213,18 +210,15 @@ public:
 	}
 
 	void	erase(iterator first, iterator last) {
-		size_type dist = ft::distance(first, last);
-
-		while (dist) {
-			//this->_map.delete_nod(*first);
-			this->_map.delete_nod(_map.search_node(_map.root, *first));
-			first++;
-			dist--;
+		iterator next = first;
+		while (first != last) {
+			next++;
+			this->erase(first);
+			first = next;
 		}
 	}
 
 	void	swap(map& x) {
-		//this->_map.swap(x._map)
 		RB_tree<value_type, key_compare> tmp = x._map;
 		x._map = this->_map;
 		this->_map = tmp;
@@ -233,7 +227,6 @@ public:
 	void	clear(void) {
 		if (this->size()) {
 			this->_map.clean_tree(this->_map.root);
-			//this->_alloc.deallocate(this->_map.root, 1);
 			this->_map.root = this->_map.null_leaf;
 		}
 	}

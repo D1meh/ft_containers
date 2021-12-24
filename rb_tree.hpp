@@ -63,6 +63,7 @@ public:
 		this->right = n.right;
 		this->parent = n.parent;
 		this->color = n.color;
+		this->null_leaf = n.null_leaf;
 		return *this;
 	}
 

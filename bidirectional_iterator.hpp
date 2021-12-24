@@ -45,6 +45,11 @@ public:
 	}
 
 	bidirectional_iterator& operator++(void) {
+		if (this->n->null_leaf == NULL) {
+			this->n = this->last;
+			this->_ptr = &this->n->val;
+			return *this;
+		}
 		this->n = this->n->getNext();
 		this->_ptr = &this->n->val;
 		return *this;
@@ -166,6 +171,11 @@ public:
 	}
 
 	const_bidirectional_iterator& operator++(void) {
+		if (this->n->null_leaf == NULL) {
+			this->n = this->last;
+			this->_ptr = &this->n->val;
+			return *this;
+		}
 		this->n = this->n->getNext();
 		this->_ptr = &this->n->val;
 		return *this;
