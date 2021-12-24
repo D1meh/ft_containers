@@ -400,7 +400,6 @@ public:
 
 		while (tmp != this->null_leaf) {
 			y = tmp;
-			//if (nod->val < tmp->val)
 			if (comp(nod->val.first, tmp->val.first))
 				tmp = tmp->left;
 			else
@@ -410,11 +409,37 @@ public:
 		if (y == this->null_leaf)
 			this->root = nod;
 		else if (comp(nod->val.first, y->val.first))
-		//else if (nod->val < y->val)
 			y->left = nod;
 		else
 			y->right = nod;
 		
+		nod->left = this->null_leaf;
+		nod->right = this->null_leaf;
+		nod->color = RED;
+		if (this->size(this->root) == 0)
+			root->parent = null_leaf;
+		this->insert_fixup(nod);
+	}
+
+	void insert_node_set(Node* nod) {
+		Node *tmp = this->root;
+		Node *y = this->null_leaf;
+
+		while (tmp != this->null_leaf) {
+			y = tmp;
+			if (comp(nod->val, tmp->val))
+				tmp = tmp->left;
+			else
+				tmp = tmp->right;
+		}
+		nod->parent = y;
+		if (y == this->null_leaf)
+			this->root = nod;
+		else if (comp(nod->val, y->val))
+			y->left = nod;
+		else
+			y->right = nod;
+
 		nod->left = this->null_leaf;
 		nod->right = this->null_leaf;
 		nod->color = RED;
@@ -467,6 +492,17 @@ public:
 			return search_node(nod->right, x);
 	}
 
+	Node* search_node_set(Node* nod, value_type const& x) {
+		if (nod == null_leaf)
+			return NULL;
+		if (nod->val == x)
+			return nod;
+		else if (comp(x, nod->val))
+			return search_node_set(nod->left, x);
+		else
+			return search_node_set(nod->right, x);
+	}
+
 	template <class V>
 	Node* search_key(Node *nod, V const& x) {
 		if (nod == null_leaf)
@@ -478,6 +514,18 @@ public:
 			return search_key(nod->left, x);
 		else
 			return search_key(nod->right, x);
+	}
+
+	template <class V>
+	Node* search_key_set(Node *nod, V const& x) {
+		if (nod == null_leaf)
+			return NULL;
+		if (nod->val == x)
+			return nod;
+		else if (comp(x, nod->val))
+			return search_key_set(nod->left, x);
+		else
+			return search_key_set(nod->right, x);
 	}
 
 	void print_tree(Node *nod) {

@@ -159,9 +159,9 @@ public:
 	}
 
 	const_bidirectional_iterator& operator=(bidirectional_iterator<value_type> const& it) {
-		this->n = it.n;
-		this->_ptr = it._ptr;
-		this->last = it.last;
+		this->n = it.getCurrentNode();
+		this->_ptr = it.base();
+		this->last = it.getFinalNode();
 		return *this;
 	}
 

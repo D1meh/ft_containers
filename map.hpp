@@ -9,7 +9,6 @@
 #include "type_traits.hpp"
 #include "distance.hpp"
 #include "compare.hpp"
-#include "type_traits.hpp"
 
 namespace ft {
 
@@ -33,8 +32,6 @@ public:
 	typedef typename ft::reverse_iterator<iterator>						reverse_iterator;
 	typedef typename ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 
-	typedef typename RB_tree<value_type, key_compare>::Node				Node;
-	typedef Node*														node_ptr;
 	
 	class value_compare {
 
@@ -54,11 +51,15 @@ public:
 
 private:
 
+	typedef typename RB_tree<value_type, key_compare>::Node				Node;
+	typedef Node*													node_ptr;
+	
 	RB_tree<value_type, key_compare>		_map;
 	key_compare								_comp;
 	allocator_type							_alloc;
 	
 public:
+
 		/*********************************/
 		/*							     */
 		/*	CONSTRUCTORS AND DESTRUCTORS */
@@ -91,6 +92,7 @@ public:
 		this->insert(x.begin(), x.end());
 	}
 
+	// DESTRUCTOR
 	~map(void) {
 		this->_map.clean_tree(this->_map.root);
 		this->_map.alloc.deallocate(this->_map.null_leaf, 1);
